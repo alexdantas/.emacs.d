@@ -1,0 +1,14 @@
+backups/
+eshell/
+auto-save-list
+server
+thumbs
+ac-comphist.dat
+places
+.mc-lists.el
+.smex-items
+url
+var
+ede-projects.el
+org-*
+elpa

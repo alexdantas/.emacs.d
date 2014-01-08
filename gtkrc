@@ -1,0 +1,6 @@
+# Configurations for emacs GTK (grafical) mode
+
+gtk-font-name       = "Ubuntu 10"
+gtk-icon-theme-name = "Faenza"
+
+
