@@ -4,7 +4,7 @@
 ; Enabling the color-theme mode and selecting my own
 (require 'color-theme)
 (load "~/.emacs.d/config/alexdantas-color-theme.el")
-(color-theme-kure-dark)
+(alexdantas-color-theme)
 
 ; Zenburn is an awesome theme, I must someday get colors from
 ; this and implement on mine

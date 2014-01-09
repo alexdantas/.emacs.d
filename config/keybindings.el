@@ -117,4 +117,10 @@
 ; See 'functions.el`.
 (global-set-key (kbd "C-c o") 'kure-open-file-fast)
 
+; Tab is for Autocomplete
+; C-o is for Yasnippet
+(global-set-key (kbd "C-o") 'yas-expand)
+
+(global-set-key (kbd "TAB") 'indent-for-tab-command)
+
 

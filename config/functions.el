@@ -161,7 +161,7 @@
   (let (file)
 	(setq file
 		  (cond
-		   ((string= openCode "1") "~/.emacs" )
+		   ((string= openCode "1") "~/.emacs.d/init.el" )
 		   ((string= openCode "2") "~/.bashrc" )
 		   ((string= openCode "3") "~/.bash_aliases" )
 		   (t (error "Invalid option %s." openCode))
