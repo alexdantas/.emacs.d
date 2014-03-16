@@ -1,0 +1,2 @@
+# --
+std::find(${1:v}.begin(), $1.end, ${2:element});

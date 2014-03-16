@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: ternary
+# key: ?
+# --
+((${1:cond}) ?
+${2:whenTrue} :
+${3:whenFalse})

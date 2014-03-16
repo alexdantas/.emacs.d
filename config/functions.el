@@ -16,6 +16,19 @@
     (insert line)
     (move-to-column column)))
 
+; A variation of the above function
+(defun duplicate-line ()
+  "Copy current line to line below."
+  (interactive)
+  (let* ((beg (line-beginning-position))
+         (end (line-end-position))
+         (line (buffer-substring-no-properties beg end))
+         (column (current-column)))
+    (goto-char (line-end-position))
+    (newline)
+    (insert line)
+    (move-to-column column)))
+
 ; Asciidoc shortcut to preview current buffer in HTML
 (defun adoc-preview-html ()
   "Previews current Asciidoc buffer in HTML on defaut web browser."
@@ -154,17 +167,31 @@
   (after my-window-split first () activate)
   (set-window-buffer (next-window) (other-buffer)))
 
-; Open custom files easily. Thanks, Xah (ergoemacs.org)!
-(defun kure-open-file-fast (openCode)
-  "Prompt to open a file from a pre-defined set"
-  (interactive "sOpen fIle 1::emacs 2::bashrc 3::bash_aliases: ")
-  (let (file)
-	(setq file
-		  (cond
-		   ((string= openCode "1") "~/.emacs.d/init.el" )
-		   ((string= openCode "2") "~/.bashrc" )
-		   ((string= openCode "3") "~/.bash_aliases" )
-		   (t (error "Invalid option %s." openCode))
-		   ))
-	(find-file file)))
+; Awesome function that uses ido to go to a recent file.
+; The catch is that it replaces the $HOME path with ~
+;
+; Source (thanks, Damien Cassou):
+; http://masteringemacs.org/articles/2011/01/27/find-files-faster-recent-files-package/
+(defun ido-recentf-open ()
+  "Use `ido-completing-read` to \\[find-file] a recent file"
+  (interactive)
+  (let ((home (expand-file-name (getenv "HOME"))))
+	(find-file
+	 (ido-completing-read "Open recent file: "
+						  (mapcar (lambda (path)
+									(replace-regexp-in-string home "~" path))
+								  recentf-list)
+						  nil t))))
+
+; Same as above function, but now with the bookmarks!
+(defun ido-bookmark-open ()
+  "Use `ido-completing-read` to \\[find-file] a bookmarked file"
+  (interactive)
+  (let ((home (expand-file-name (getenv "HOME"))))
+	(bookmark-jump
+	 (ido-completing-read "Open bookmark: "
+						  (mapcar (lambda (path)
+									(replace-regexp-in-string home "~" path))
+								  (bookmark-all-names))
+						  nil t))))
 

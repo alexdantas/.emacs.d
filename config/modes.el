@@ -5,6 +5,8 @@
 ;; https://github.com/jwiegley/use-package
 (require 'use-package)
 
+; Le `use-package` cheatsheet
+;
 ; `use-package`  Creates autoloads for packages and defer loading
 ;                until we actually use it.
 ; `:bind`        Binds key after loading method.
@@ -16,34 +18,45 @@
 ; `:defer`       Forces defer loading.
 ; `:config`      Runs after module is loaded.
 
-; C-j does ace jump, instant jump anywhere on buffer.
-										; Previously C-cSPC.
+
+
 (use-package ace-jump-mode
-  :bind ("C-j" . ace-jump-mode)
-  :config
-  ;(message "Ace jump mode loaded!")
+  ; I'm using a different file to store key bindings
+  ; :bind ("C-j" . ace-jump-mode)
   )
 
 (use-package markdown-mode
   :mode ("\\.md$" . markdown-mode))
+
+; Aww yeah, Arch Linux!
+(use-package shell-script-mode
+  :mode ("\\PKGBUILD$" . shell-script-mode))
 
 (use-package adoc-mode
   :mode (("\\.adoc$" . adoc-mode)
 		 ("\\.asciidoc$" . adoc-mode)
 		 ("\\.txt$"  . adoc-mode)))
 
+(use-package gnuplot-mode
+  ;; I had trouble finding a "standard" gnuplot
+  ;; file extension.
+  :mode (("\\.gnuplot$" . gnuplot-mode)
+		 ("\\.gp$" . gnuplot-mode)
+		 ("\\.gpi$" . gnuplot-mode)
+		 ("\\.plt$" . gnuplot-mode)))
+
 (use-package scss-mode
   :mode ("\\.scss\\'" . scss-mode)
   :config
-  ; please don't convert to CSS at save, kthx
+  ; Don't convert to CSS at save, kthx
   (setq scss-compile-at-save nil))
 
 (use-package haml-mode
   :defer t
   :config
   ; On HAML we don't have TABs at all
-  (;(setq indent-tabs-mode 'nil)
-   (define-key haml-mode-map "\C-m" 'newline-and-indent)))
+  ;(setq indent-tabs-mode 'nil)
+  (define-key haml-mode-map "\C-m" 'newline-and-indent))
 
 (use-package arduino-mode
   :mode (("\\.pde$" . arduino-mode)
@@ -52,6 +65,28 @@
 (use-package gas-mode
   :mode (("\\.S\\'" . gas-mode)
 		 ("\\.asm$" . gas-mode)))
+
+; Omitting files starting with dots (except for "..")
+; Remember that's M-o to toggle auto-hiding.
+; Source: http://stackoverflow.com/a/14850863/1094964
+(use-package dired-x
+  :config
+  (setq-default dired-omit-files-p t)
+  (setq dired-omit-files "^\\.[^.]"))
+
+; Customizing `recentf`
+(use-package recentf
+  :config
+  (setq recentf-max-saved-items 50))
+
+; Uniquify removes that awful default naming scheme for
+; same file names.
+; Instead of `Makefile<1>` and `Makefile<2>` we get
+; `Makefile:parent_folder` and `Makefile:other_parent_folder`
+(use-package uniquify
+  :config
+  (setq uniquify-buffer-name-style 'post-forward)
+  (setq uniquify-separator ":"))
 
 ;; End of `use-package`
 
@@ -69,11 +104,18 @@
 ; Disable funky animation when switching workspaces D:
 (setq wg-morph-on 'nil)
 
-; Damn flyspell-mode, deactivate it whenever I can
-(add-hook 'adoc-mode-hook     '(lambda () (setq flyspell-mode 'nil)))
-(add-hook 'markdown-mode-hook '(lambda () (setq flyspell-mode 'nil)))
-(setq flyspell-mode 'nil)
-(setq flymake-allowed-file-name-masks "")
+; Loving flyspell-mode for text-related modes
+(defun turn-on-flyspell ()
+  (flyspell-mode 1)
+  (flyspell-buffer))
+
+(add-hook 'text-mode-hook 'turn-on-flyspell)
+(add-hook 'adoc-mode-hook 'turn-on-flyspell)
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+
+; Deactivating it whenever I can
+;(setq flyspell-mode 'nil)
+;(setq flymake-allowed-file-name-masks "")
 
 ; Linum mode: Display line numbers on the left
 ; Set it always, except when using any of the modes listed below
@@ -92,6 +134,7 @@
 
 ; YASnippet mode: always needed (but it loads Just-In-Time)
 (require 'yasnippet)
+(setq yas-snippet-dirs "~/.emacs.d/yasnippets")
 (yas-global-mode 1)
 
 ;; ; hide-region.el: custom mode to hide blocks of text
@@ -153,10 +196,78 @@
 
 ; Ido mode is awesome!
 ; I want it for everything!
+(ido-mode 1)
+
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
-(ido-mode 1)
 
 ; Makes Ido guess the context of 'Find File at Point'
 (setq ido-use-filename-at-point 'guess)
+
+; Clang Complete Async (on elpa)
+(require 'auto-complete-clang-async)
+
+(defun ac-cc-mode-setup ()
+  (setq ac-clang-complete-executable "~/.emacs.d/elpa/auto-complete-clang-async-server/clang-complete")
+  (setq ac-sources '(ac-source-clang-async))
+  (ac-clang-launch-completion-process))
+
+(defun my-ac-config ()
+  (add-hook 'c-mode-common-hook 'ac-cc-mode-setup)
+  (add-hook 'auto-complete-mode-hook 'ac-common-setup)
+  (global-auto-complete-mode t))
+
+(my-ac-config)
+
+; Dired mode: switches passed to 'ls' when viewing dired mode
+(setq dired-listing-switches "-lahpD")
+
+; Dired details hides unnecessary things from Dired mode
+(require 'dired-details+)
+
+; Customizing ibuffer's options
+;
+; Source:
+; http://xsteve.at/prg/emacs/power-user-tips.html
+(setq ibuffer-shrink-to-minimum-size t)
+(setq ibuffer-always-show-last-buffer nil)
+(setq ibuffer-sorting-mode 'recency)
+(setq ibuffer-use-header-line t)
+
+;; THIS GIVES AN INITIALIZATION ERROR
+;; FIND OUT WHY
+;;
+;; ;; On ibuffer, use human readable Size column instead of original one
+;; (define-ibuffer-column size-h
+;;   (:name "Size" :inline t)
+;;   (cond
+;;    ((> (buffer-size) 1000000) (format "%7.1fM" (/ (buffer-size) 1000000.0)))
+;;    ((> (buffer-size) 1000)    (format "%7.1fK" (/ (buffer-size) 1000.0)))
+;;    (t (format "%8d" (buffer-size)))))
+;;
+;; ;; Modify the default ibuffer-formats
+;; (setq ibuffer-formats
+;; 	  '((mark modified read-only " "
+;; 			  (name 18 18 :left :elide)
+;; 			  " "
+;; 			  (size-h 9 -1 :right)
+;; 			  " "
+;; 			  (mode 16 16 :left :elide)
+;; 			  " "
+;; 			  filename-and-process)))
+
+;; Switching to ibuffer puts the cursor on the most recent buffer
+(defadvice ibuffer (around ibuffer-point-to-most-recent) ()
+  "Open ibuffer with cursor pointed to most recent buffer name"
+  (let ((recent-buffer-name (buffer-name)))
+	ad-do-it
+	(ibuffer-jump-to-buffer recent-buffer-name)))
+
+(ad-activate 'ibuffer)
+
+;; This makes emacs save the cursor position when opening
+;; all files.
+(require 'saveplace)
+(setq save-place-file (concat user-emacs-directory "saveplace.el"))
+(setq-default save-place t)
 

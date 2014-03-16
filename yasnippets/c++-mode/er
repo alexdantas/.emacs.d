@@ -1,0 +1,4 @@
+# -*- mode: snippet -*-
+# name: cerr
+# --
+std::cerr << $0;

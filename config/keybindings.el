@@ -6,7 +6,7 @@
 (global-set-key "\C-w"     'backward-kill-word)
 (global-set-key "\C-x\C-k" 'kill-region)
 
-; Will never be the same without Ace Jump
+; Instantly jump anywhere with Ace Jump!
 (global-set-key (kbd "C-j") 'ace-jump-mode)
 
 ; Multi-cursors at once! Farewell, Sublime Text.
@@ -33,6 +33,9 @@
 
 ; Interactivelly resize/create/delete windows with arrow keys
 (global-set-key (kbd "C-c w") 'windresize)
+
+; Interactivelly resize/create/delete windows with arrow keys
+(global-set-key (kbd "C-x C-b") 'ibuffer)
 
 ; We'll always try to indent when newlinin'
 (global-set-key (kbd "RET") 'newline-and-indent)
@@ -72,7 +75,12 @@
 
 ; My custom function to comment this line and
 ; duplicate it below.
-(global-set-key (kbd "C-c C-d") 'comment-and-duplicate-line)
+(global-set-key (kbd "C-c d") 'comment-and-duplicate-line)
+(global-set-key (kbd "C-c u") 'duplicate-line)
+
+; Quickly goto line. Previously was backward-yank-word,
+; which is also available as M-Backspace
+(global-set-key (kbd "C-w") 'goto-line)
 
 ; Magit
 (global-set-key (kbd "C-c m") 'magit-status)
@@ -100,18 +108,20 @@
 ;(add-hook 'c-mode-common-hook 'my-cedet-hook)
 
 ; Dired mode: Keybindings to ease navegation
+;
 ; Prevents dired from spawning a buffer for each directory
 ; (thanks, 'http://ergoemacs.org/emacs/emacs_dired_tips.html'!)
 (add-hook 'dired-mode-hook
 		  (lambda ()
 			(define-key dired-mode-map (kbd "C-b")
 			  (lambda () (interactive) (find-alternate-file "..")))
-			(define-key dired-mode-map (kbd "^")
-			  (lambda () (interactive) (find-alternate-file "..")))
 			(define-key dired-mode-map (kbd "C-f")
 			  'dired-find-alternate-file)
 			(define-key dired-mode-map (kbd "<return>")
 			  'dired-find-alternate-file)))
+
+; Go to current file on dired
+(global-set-key (kbd "C-x j") 'dired-jump)
 
 ; Custom function to open pre-defined files easily.
 ; See 'functions.el`.
@@ -120,7 +130,11 @@
 ; Tab is for Autocomplete
 ; C-o is for Yasnippet
 (global-set-key (kbd "C-o") 'yas-expand)
-
 (global-set-key (kbd "TAB") 'indent-for-tab-command)
 
+; My custom function to open recent files with ido
+(global-set-key (kbd "C-x C-r") 'ido-recentf-open)
+
+; My custom function to open recent files with ido
+(global-set-key (kbd "C-c o") 'ido-bookmark-open)
 

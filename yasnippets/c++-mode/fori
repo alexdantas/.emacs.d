@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: fori
+# --
+for (std::${1:type}::iterator it = ${2:var}.begin();
+it != $2.end();
+++it)
+{
+    $0
+}

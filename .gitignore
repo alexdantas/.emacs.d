@@ -1,4 +1,6 @@
 backups/
+bookmarks
+saveplace.el
 eshell/
 auto-save-list
 server
@@ -12,3 +14,5 @@ var
 ede-projects.el
 org-*
 elpa
+elpa-packages.txt
+emms/
