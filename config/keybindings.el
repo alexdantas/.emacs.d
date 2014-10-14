@@ -43,6 +43,7 @@
 ; Toggle line numbers on 'C-c l' (linum mode)
 (global-set-key (kbd "C-c l") 'linum-mode)
 
+(global-set-key (kbd "C-M-i") 'linum-mode)
 ; highlight-chars.el: Binds <F12> to toggle
 ; highlight trailing whitespace and <F9> to toggle tabs
 (global-set-key (kbd "<f12>") 'hc-toggle-highlight-trailing-whitespace)
@@ -130,7 +131,13 @@
 ; Tab is for Autocomplete
 ; C-o is for Yasnippet
 (global-set-key (kbd "C-o") 'yas-expand)
-(global-set-key (kbd "TAB") 'indent-for-tab-command)
+
+(defun run-indent-and-autocomplete ()
+  (interactive)
+  (indent-for-tab-command)
+  (auto-complete))
+
+(global-set-key (kbd "TAB") 'run-indent-and-autocomplete)
 
 ; My custom function to open recent files with ido
 (global-set-key (kbd "C-x C-r") 'ido-recentf-open)

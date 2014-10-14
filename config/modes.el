@@ -66,6 +66,9 @@
   :mode (("\\.S\\'" . gas-mode)
 		 ("\\.asm$" . gas-mode)))
 
+(use-package js2-mode
+  :mode (("\\.js$" . js2-mode)))
+
 ; Omitting files starting with dots (except for "..")
 ; Remember that's M-o to toggle auto-hiding.
 ; Source: http://stackoverflow.com/a/14850863/1094964
@@ -89,6 +92,13 @@
   (setq uniquify-separator ":"))
 
 ;; End of `use-package`
+
+;; Mapping modes to be opened when reading specific files
+(add-to-list 'auto-mode-alist
+			 '(".inputrc" . shell-script-mode)
+			 '(".bashrc"  . shell-script-mode)
+;			 '(".bash\\.aliases" . shell-script-mode)
+)
 
 ; Doxymacs mode SUCKS - adds NOTHING USEFUL
 
@@ -116,6 +126,17 @@
 ; Deactivating it whenever I can
 ;(setq flyspell-mode 'nil)
 ;(setq flymake-allowed-file-name-masks "")
+
+; I love Sr-Speedbar, a nice sidebar for Emacs
+; Great for IDE stuff
+; http://www.emacswiki.org/emacs/SrSpeedbar
+(defun sr-speedbar-custom-options ()
+  (interactive)
+  ; I don't want it to change every time
+  ; I switch buffers
+  (sr-speedbar-refresh-turn-off))
+
+(add-hook 'sr-speedbar-mode-hook 'sr-speedbar-custom-options)
 
 ; Linum mode: Display line numbers on the left
 ; Set it always, except when using any of the modes listed below
@@ -166,6 +187,24 @@
             ; Haskell has it's own indentation stuff
             (turn-on-haskell-indentation)))
 
+; Customizations for the big Web Mode
+(defun my-web-mode-hook ()
+  "Hooks for Web mode."
+  (setq web-mode-markup-indent-offset 4)
+  (setq web-mode-css-indent-offset 4)
+  (setq web-mode-code-indent-offset 4)
+
+  ; Syntax highlighting
+  (set-face-attribute 'web-mode-doctype-face          nil :foreground "#5f8700")
+  (set-face-attribute 'web-mode-html-tag-face         nil :foreground "#af8700")
+  (set-face-attribute 'web-mode-html-tag-bracket-face nil :foreground "#626262")
+  (set-face-attribute 'web-mode-html-attr-name-face   nil :foreground "#d75f00")
+  (set-face-attribute 'web-mode-html-attr-value-face  nil :foreground "#af8700" :bold)
+  (set-face-attribute 'web-mode-html-attr-equal-face  nil :foreground "#626262")
+  (set-face-attribute 'web-mode-html-tag-custom-face  nil :foreground "#ffffff")
+  (set-face-attribute 'web-mode-attr-tag-custom-face  nil :foreground "#ffffff"))
+(add-hook 'web-mode-hook 'my-web-mode-hook)
+
 ; AUCTeX mode: assuming it is installed through ELPA
 ;(load "auctex.el" nil t t)
 (add-hook 'TeX-mode-hook
@@ -175,7 +214,14 @@
             (local-set-key (kbd "RET") 'reindent-then-newline-and-indent)
             (local-set-key (kbd "C-j") 'TeX-newline)
 			(setq TeX-view-program-list '("llpp" "llpp %o"))
+
             (TeX-PDF-mode)))
+
+; My favorite mode for editing Javascript!
+(add-hook 'js2-mode-hook
+		  (lambda ()
+			; Damn it's default setting of ENTER key.
+			(define-key js2-mode-map (kbd "RET") 'newline-and-indent)))
 
 ; Window number mode: Switch between windows
 (autoload 'window-number-mode "window-number" t)
@@ -188,7 +234,7 @@
 ; * Make my default comment char to '#' instead of ';' because
 ;   of MIPS.
 ; * Reverted back to ';' because of IA-32/x86.
-;(setq asm-comment-char 35)
+(setq asm-comment-char 35)
 
 ; Smart parenthesis up your ass.
 ; (what does it do?)
@@ -270,4 +316,8 @@
 (require 'saveplace)
 (setq save-place-file (concat user-emacs-directory "saveplace.el"))
 (setq-default save-place t)
+
+;; My own Dogescript mode!
+;; https://github.com/alexdantas/dogescript-mode
+(load "~/.emacs.d/local/dogescript-mode.el")
 
